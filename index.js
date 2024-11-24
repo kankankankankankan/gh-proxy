@@ -131,7 +131,7 @@ function httpHandler(req, pathname) {
         return new Response("blocked", {status: 403})
     }
     if (urlStr.search(/^https?:\/\//) !== 0) {
-        urlStr = 'https://' + urlStr
+        urlStr = 'https://' + urlStr        
     }
     const urlObj = newUrl(urlStr)
 
