@@ -3,7 +3,7 @@
 /**
  * static files (404.html, sw.js, conf.js)
  */
-const ASSET_URL = 'https://kankankankankankan.github.io/gh-proxy/'
+const ASSET_URL = 'https://hunshcn.github.io/gh-proxy/'
 // 前缀，如果自定义路由为example.com/gh/*，将PREFIX改为 '/gh/'，注意，少一个杠都会错！
 const PREFIX = '/'
 // 分支文件使用jsDelivr镜像的开关，0为关闭，默认关闭
@@ -63,7 +63,7 @@ addEventListener('fetch', e => {
 
 
 function checkUrl(u) {
-    for (let i of [exp1, exp2, exp3, exp4, exp5, exp6]) {
+    for (let i of [exp1, exp2, exp3, exp4, exp5, exp6, exp7]) {
         if (u.search(i) === 0) {
             return true
         }
@@ -84,7 +84,13 @@ async function fetchHandler(e) {
     }
     // cfworker 会把路径中的 `//` 合并成 `/`
     path = urlObj.href.slice(urlObj.origin.length + PREFIX.length).replace(/^https?:\/+/, 'https://')
-    if (path.search(exp1) === 0 || path.search(exp5) === 0 || path.search(exp6) === 0 || path.search(exp3) === 0 || path.search(exp4) === 0 || path.search(exp7) === 0) {
+    if (
+        path.search(exp1) === 0 ||
+        path.search(exp3) === 0 ||
+        path.search(exp5) === 0 ||
+        path.search(exp6) === 0 ||
+        path.search(exp7) === 0
+        ) {
         return httpHandler(req, path)
     } else if (path.search(exp2) === 0) {
         if (Config.jsdelivr) {
@@ -95,7 +101,7 @@ async function fetchHandler(e) {
             return httpHandler(req, path)
         }
     } else if (path.search(exp4) === 0) {
-        if (Config.jsdelivr) {  
+        if (Config.jsdelivr) {
             const newUrl = path.replace(/(?<=com\/.+?\/.+?)\/(.+?\/)/, '@$1').replace(/^(?:https?:\/\/)?raw\.(?:githubusercontent|github)\.com/, 'https://cdn.jsdelivr.net/gh')
             return Response.redirect(newUrl, 302)
         }
@@ -136,7 +142,7 @@ function httpHandler(req, pathname) {
         return new Response("blocked", { status: 403 })
     }
     if (urlStr.search(/^https?:\/\//) !== 0) {
-        urlStr = 'https://' + urlStr        
+        urlStr = 'https://' + urlStr
     }
     const urlObj = newUrl(urlStr)
 
