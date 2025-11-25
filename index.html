@@ -1,91 +1,133 @@
 <!DOCTYPE html>
-<html>
- <head> 
-  <meta http-equiv="content-type" content="txt/html; charset=utf-8" /> 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" /> 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" /> 
-  
-  <title>转化github脚本为github代理的方式</title> 
-  <link rel="stylesheet" href="./styles.css" /> 
- </head> 
- <body> 
-  <div class="d-flex align-items-start flex-wrap">
-  <div class="card shadow m-3"> 
-   <h5 class="card-header">解决纯IPv6的VPS运行GitHub脚本时访问GitHub不通的问题</h5> 
-   <div class="card-body"> 
-    <h5 class="card-title"></h5> 
-    <p>本Github Proxy项目可处理形如下列的Github一键脚本命令:</p> 
-    <p class="font-monospace">bash <(curl -L https://github.com/crazypeace/warp.sh/raw/main/warp.sh) 4 </p> 
-    <p class="font-monospace">bash <(wget -qO- -o- https://git.io/v2ray.sh) </p> 
-    <p class="font-monospace">wget -O tcpx.sh "https://git.io/JYxKU" && chmod +x tcpx.sh && ./tcpx.sh </p> 
-    <p class="font-monospace">wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/hysteria-install/main/hy2/hysteria.sh && bash hysteria.sh </p> 
-   </div> 
-   <div class="card-footer"> 
-    <span> <a href="https://github.com/crazypeace/gh-proxy/" target="_self">Fork me on GitHub</a> </span> 
-   </div> 
-  </div> 
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Github 文件加速</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* 酷炫标题：流动渐变，去掉发光 */
+    @keyframes gradient-x {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .animate-gradient-x {
+      background: linear-gradient(90deg, #4f46e5, #ec4899, #facc15, #22d3ee);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradient-x 5s ease infinite;
+    }
 
-  <div class="card shadow m-3"> 
-   <h5 class="card-header">转换Github一键脚本命令</h5> 
-   <div class="card-body"> 
-    <h5 class="card-title"></h5> 
-    <label>输入你原本的GitHub脚本命令:</label> 
-    <div class="input-group mb-3"> 
-     <input type="text" class="form-control" id="githubScript" aria-describedby="basic-addon1" placeholder="例如 bash <(curl -L https://github.com/crazypeace/warp.sh/raw/main/warp.sh) 4" /> 
-    </div> 
-    <div class="input-group mb-3"> 
-     <button class="btn btn-primary" type="button" onclick="convertScript()" id="cvtBtn">转换脚本</button> 
-    </div> 
-    <p>以下为转换后的一键脚本命令, 请在命令行中执行</p> 
-    <label>只处理一层脚本中GitHub资源</label> 
-    <div class="input-group mb-3"> 
-     <input type="text" class="form-control" id="result2" aria-describedby="basic-addon2" onfocus="this.select()" /> 
-     <button class="btn btn-info" type="button" onclick="copyResult2()">复制</button> 
-    </div> 
-    <label>处理GitHub脚本里面嵌套调用了其它GitHub脚本</label> 
-    <div class="input-group mb-3"> 
-     <input type="text" class="form-control" id="result1" aria-describedby="basic-addon2" onfocus="this.select()" /> 
-     <button class="btn btn-info" type="button" onclick="copyResult1()">复制</button> 
-    </div> 
-   </div> 
-  </div> 
+    /* 支持地址代码溢出处理 */
+    code {
+      display: block;
+      white-space: pre-wrap; /* 自动换行 */
+      word-break: break-word; /* 遇到长字符串换行 */
+      background-color: rgba(0,0,0,0.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
 
-  <div class="card shadow m-3"> 
-   <h5 class="card-header">简单转换Github网址</h5> 
-   <div class="card-body"> 
-    <h5 class="card-title"></h5> 
-    <label>输入GitHub资源链接</label> 
-    <div class="input-group mb-3"> 
-     <input type="text" class="form-control" id="githubRes" aria-describedby="basic-addon1" placeholder="例如 https://github.com/crazypeace/warp.sh/raw/main/warp.sh" /> 
-    </div> 
-    <div class="input-group mb-3"> 
-     <button class="btn btn-primary" type="button" onclick="convertRes()" id="cvtBtn">转换资源</button> 
-    </div> 
-    <label>以下为转换后的链接</label> 
-    <div class="input-group mb-3"> 
-     <input type="text" class="form-control" id="resAfterGhproxy" aria-describedby="basic-addon2" onfocus="this.select()" /> 
-     <button class="btn btn-info" type="button" onclick="fetchRes()">获取</button> 
-    </div> 
-   </div> 
-  </div> 
+  <div class="container mx-auto px-4 py-12 max-w-6xl">
+    <!-- 酷炫标题 -->
+    <div class="text-center mb-12">
+      <h1 class="text-5xl md:text-6xl font-extrabold animate-gradient-x mb-4">
+        Github 文件加速
+      </h1>
+      <p class="text-lg text-slate-600 dark:text-slate-300 font-medium">
+        快速、稳定的 Github 文件下载加速服务
+      </p>
+    </div>
 
-  <div class="card shadow m-3"> 
-   <h5 class="card-header">其它说明</h5> 
-   <div class="card-body"> 
-    <h5 class="card-title"></h5> 
+    <!-- 工具卡片 -->
+    <div class="tool-card bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 mb-8">
+      <div class="input-section mb-6">
+        <div class="input-header flex justify-between items-center mb-2">
+          <div class="input-title flex items-center">
+            <span class="iconify i-simple-icons:github mr-2" aria-hidden="true"></span> Github 链接输入
+          </div>
+          <div class="status-indicator text-sm text-gray-500">等待输入</div>
+        </div>
+        <div class="relative inline-flex items-center w-full">
+          <input type="text" placeholder="请输入 Github 上文件/仓库地址" 
+                 class="rounded-md border-0 appearance-none placeholder:text-gray-400 focus:outline-none 
+                        disabled:cursor-not-allowed disabled:opacity-75 transition-colors px-3 py-2 text-base w-full 
+                        bg-slate-100 dark:bg-slate-700 ring ring-inset ring-gray-300 dark:ring-gray-600">
+          <span class="absolute inset-y-0 start-0 flex items-center ps-3">
+            <span class="iconify i-simple-icons:github shrink-0 text-gray-400 size-6" aria-hidden="true"></span>
+          </span>
+          <span class="absolute inset-y-0 end-0 flex items-center pe-3">
+            <button type="button" disabled
+                    class="rounded-md font-medium inline-flex items-center disabled:cursor-not-allowed 
+                           disabled:opacity-50 transition-colors px-2 py-1 text-xs gap-1">
+              开始下载
+            </button>
+          </span>
+        </div>
+      </div>
 
-    <label>高级参数 (不懂就不要动)</label> 
-    <div class="input-group mb-3"> 
-     <span class="input-group-text">Github Proxy 后端</span> 
-     <input type="text" class="form-control" id="ghproxy" aria-describedby="basic-addon3" value="https://ghproxy.crazypeace.workers.dev/" /> 
-     <button class="btn btn-info" type="button" onclick="getLocalUrl()" id="localUrlBtn">使用本页</button> 
-    </div> 
-   </div> 
-  </div> 
+      <!-- 加速模式 -->
+      <div class="mode-section">
+        <div class="mode-title flex items-center mb-2">
+          <span class="iconify i-heroicons:rocket-launch mr-2"></span> 加速模式
+        </div>
+        <div class="mode-options">
+          <fieldset class="flex flex-col gap-2">
+            <label class="flex items-center gap-2 text-sm">
+              <input type="radio" name="mode" value="cloudflare" checked class="accent-blue-500">
+              CloudFlare + Fastgit + JSDelivr
+            </label>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+
+    <!-- 信息卡片 -->
+    <div class="info-grid grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="info-card bg-white dark:bg-slate-800 rounded-xl shadow-md p-4">
+        <div class="info-icon principle-icon mb-2 text-blue-500">
+          <span class="iconify i-heroicons:cog-6-tooth" aria-hidden="true"></span>
+        </div>
+        <h3 class="info-title font-semibold mb-2">原理解析</h3>
+        <p>所有文件会使用 <a href="https://workers.cloudflare.com/" target="_blank" class="text-blue-500 underline">Cloudflare</a> 加速跳转，文件会跳转至 <a href="https://www.jsdelivr.com/" target="_blank" class="text-blue-500 underline">JSDelivr</a>，Git 会进行重定向到 <a href="https://doc.fastgit.org/zh-cn/" target="_blank" class="text-blue-500 underline">Fastgit.org</a></p>
+        <p class="text-sm text-amber-600 dark:text-amber-400 mt-2">注意：公共免费资源，请合理、适度使用 (*≧ω≦)</p>
+      </div>
+
+      <div class="info-card bg-white dark:bg-slate-800 rounded-xl shadow-md p-4">
+        <div class="info-icon mode-icon mb-2 text-purple-500">
+          <span class="iconify i-heroicons:arrow-path" aria-hidden="true"></span>
+        </div>
+        <h3 class="info-title font-semibold mb-2">加速模式</h3>
+        <ul class="list-disc list-inside">
+          <li><strong>Git 仓库克隆：</strong>点击按钮复制 <code>git clone $URL</code> 到剪贴板</li>
+          <li><strong>文件下载模式：</strong>点击按钮在新标签页加速下载</li>
+        </ul>
+      </div>
+
+      <div class="info-card bg-white dark:bg-slate-800 rounded-xl shadow-md p-4">
+        <div class="info-icon support-icon mb-2 text-green-500">
+          <span class="iconify i-heroicons:document-check" aria-hidden="true"></span>
+        </div>
+        <h3 class="info-title font-semibold mb-2">支持的地址</h3>
+        <ul class="list-disc list-inside">
+          <li>分支源码：<code>archive/master.zip</code></li>
+          <li>Release源码：<code>archive/v0.1.0.tar.gz</code></li>
+          <li>Release文件：<code>releases/download/v0.1.0/example.zip</code></li>
+          <li>分支文件：<code>blob/master/filename</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 开源信息 -->
+
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script> 
-  <script src="./main.js"></script>  
- </body>
+  <!-- Iconify 图标库 -->
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+</body>
 </html>
