@@ -4,130 +4,148 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Github 文件加速</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* 酷炫标题：流动渐变，去掉发光 */
-    @keyframes gradient-x {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    /* 基础布局 */
+    body {
+      font-family: system-ui, sans-serif;
+      background-color: #f1f5f9; /* 浅色背景 */
+      color: #1e293b;
+      margin: 0;
+      padding: 0;
     }
-    .animate-gradient-x {
-      background: linear-gradient(90deg, #4f46e5, #ec4899, #facc15, #22d3ee);
-      background-size: 300% 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: gradient-x 5s ease infinite;
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #0f172a;
+        color: #e2e8f0;
+      }
     }
 
-    /* 支持地址代码溢出处理 */
+    .container {
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 3rem 1rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    p.subtitle {
+      text-align: center;
+      font-size: 1.125rem;
+      color: #475569;
+      margin-bottom: 3rem;
+    }
+    @media (prefers-color-scheme: dark) {
+      p.subtitle { color: #cbd5e1; }
+    }
+
+    /* 卡片样式 */
+    .card {
+      background-color: #fff;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    @media (prefers-color-scheme: dark) {
+      .card {
+        background-color: #1e293b;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+    }
+
+    /* 输入框 */
+    input[type="text"] {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    @media (prefers-color-scheme: dark) {
+      input[type="text"] {
+        background-color: #334155;
+        border-color: #475569;
+        color: #e2e8f0;
+      }
+    }
+
+    button {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      border: none;
+      background-color: #3b82f6;
+      color: white;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* 信息网格 */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    h3 {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      padding-left: 1.25rem;
+    }
+
     code {
       display: block;
-      white-space: pre-wrap; /* 自动换行 */
-      word-break: break-word; /* 遇到长字符串换行 */
+      white-space: pre-wrap;
+      word-break: break-word;
       background-color: rgba(0,0,0,0.05);
-      padding: 2px 6px;
-      border-radius: 4px;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+    }
+    @media (prefers-color-scheme: dark) {
+      code { background-color: rgba(255,255,255,0.1); }
+    }
+
+    .icon {
+      vertical-align: middle;
+      margin-right: 0.5rem;
     }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
 
-  <div class="container mx-auto px-4 py-12 max-w-6xl">
-    <!-- 酷炫标题 -->
-    <div class="text-center mb-12">
-      <h1 class="text-5xl md:text-6xl font-extrabold animate-gradient-x mb-4">
-        Github 文件加速
-      </h1>
-      <p class="text-lg text-slate-600 dark:text-slate-300 font-medium">
-        快速、稳定的 Github 文件下载加速服务
-      </p>
+<body>
+  <div class="container">
+    <!-- 标题 -->
+    <h1>Github 文件加速</h1>
+    <p class="subtitle">快速、稳定的 Github 文件下载加速服务</p>
+
+    <!-- 输入框卡片 -->
+    <div class="card">
+      <div style="margin-bottom:1rem;">
+        <label>
+          <span class="icon">🐱</span>Github 链接输入
+        </label>
+        <input type="text" placeholder="请输入 Github 上文件/仓库地址">
+      </div>
+      <button disabled>开始下载</button>
     </div>
-
-    <!-- 工具卡片 -->
-    <div class="tool-card bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 mb-8">
-      <div class="input-section mb-6">
-        <div class="input-header flex justify-between items-center mb-2">
-          <div class="input-title flex items-center">
-            <span class="iconify i-simple-icons:github mr-2" aria-hidden="true"></span> Github 链接输入
-          </div>
-          <div class="status-indicator text-sm text-gray-500">等待输入</div>
-        </div>
-        <div class="relative inline-flex items-center w-full">
-          <input type="text" placeholder="请输入 Github 上文件/仓库地址" 
-                 class="rounded-md border-0 appearance-none placeholder:text-gray-400 focus:outline-none 
-                        disabled:cursor-not-allowed disabled:opacity-75 transition-colors px-3 py-2 text-base w-full 
-                        bg-slate-100 dark:bg-slate-700 ring ring-inset ring-gray-300 dark:ring-gray-600">
-          <span class="absolute inset-y-0 start-0 flex items-center ps-3">
-            <span class="iconify i-simple-icons:github shrink-0 text-gray-400 size-6" aria-hidden="true"></span>
-          </span>
-          <span class="absolute inset-y-0 end-0 flex items-center pe-3">
-            <button type="button" disabled
-                    class="rounded-md font-medium inline-flex items-center disabled:cursor-not-allowed 
-                           disabled:opacity-50 transition-colors px-2 py-1 text-xs gap-1">
-              开始下载
-            </button>
-          </span>
-        </div>
-      </div>
-
-      <!-- 加速模式 -->
-      <div class="mode-section">
-        <div class="mode-title flex items-center mb-2">
-          <span class="iconify i-heroicons:rocket-launch mr-2"></span> 加速模式
-        </div>
-        <div class="mode-options">
-          <fieldset class="flex flex-col gap-2">
-            <label class="flex items-center gap-2 text-sm">
-              <input type="radio" name="mode" value="cloudflare" checked class="accent-blue-500">
-              CloudFlare + Fastgit + JSDelivr
-            </label>
-          </fieldset>
-        </div>
-      </div>
-    </div>
-
-    <!-- 信息卡片 -->
-    <div class="info-grid grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="info-card bg-white dark:bg-slate-800 rounded-xl shadow-md p-4">
-        <div class="info-icon principle-icon mb-2 text-blue-500">
-          <span class="iconify i-heroicons:cog-6-tooth" aria-hidden="true"></span>
-        </div>
-        <h3 class="info-title font-semibold mb-2">原理解析</h3>
-        <p>所有文件会使用 <a href="https://workers.cloudflare.com/" target="_blank" class="text-blue-500 underline">Cloudflare</a> 加速跳转，文件会跳转至 <a href="https://www.jsdelivr.com/" target="_blank" class="text-blue-500 underline">JSDelivr</a>，Git 会进行重定向到 <a href="https://doc.fastgit.org/zh-cn/" target="_blank" class="text-blue-500 underline">Fastgit.org</a></p>
-        <p class="text-sm text-amber-600 dark:text-amber-400 mt-2">注意：公共免费资源，请合理、适度使用 (*≧ω≦)</p>
-      </div>
-
-      <div class="info-card bg-white dark:bg-slate-800 rounded-xl shadow-md p-4">
-        <div class="info-icon mode-icon mb-2 text-purple-500">
-          <span class="iconify i-heroicons:arrow-path" aria-hidden="true"></span>
-        </div>
-        <h3 class="info-title font-semibold mb-2">加速模式</h3>
-        <ul class="list-disc list-inside">
-          <li><strong>Git 仓库克隆：</strong>点击按钮复制 <code>git clone $URL</code> 到剪贴板</li>
-          <li><strong>文件下载模式：</strong>点击按钮在新标签页加速下载</li>
-        </ul>
-      </div>
-
-      <div class="info-card bg-white dark:bg-slate-800 rounded-xl shadow-md p-4">
-        <div class="info-icon support-icon mb-2 text-green-500">
-          <span class="iconify i-heroicons:document-check" aria-hidden="true"></span>
-        </div>
-        <h3 class="info-title font-semibold mb-2">支持的地址</h3>
-        <ul class="list-disc list-inside">
-          <li>分支源码：<code>archive/master.zip</code></li>
-          <li>Release源码：<code>archive/v0.1.0.tar.gz</code></li>
-          <li>Release文件：<code>releases/download/v0.1.0/example.zip</code></li>
-          <li>分支文件：<code>blob/master/filename</code></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 开源信息 -->
 
   </div>
-
-  <!-- Iconify 图标库 -->
-  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 </body>
 </html>
